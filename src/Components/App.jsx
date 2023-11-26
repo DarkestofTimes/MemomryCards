@@ -10,34 +10,43 @@ function App() {
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(savedScore);
   const [visited, setVisited] = useState([]);
-  const reshuffledData = [];
+  const reshuffledArray = [];
 
   const shuffle = () => {
     const newArray = [...data];
     const indexScore = score <= 15 ? 0 : score <= 30 ? 15 : 30;
-    const reshuffledArray = [];
-    while (reshuffledArray.length < 45 && newArray.length !== 0) {
+    const section = newArray.splice(indexScore, 15);
+    reshuffledArray.length = 0;
+    while (reshuffledArray.length < 15 && newArray.length !== 0) {
       reshuffledArray.push(
-        newArray.splice(Math.floor(Math.random() * newArray.length), 1)[0]
-      );
-    }
-    const section = reshuffledArray.splice(indexScore, 15);
-    reshuffledData.length = 0;
-    while (reshuffledData.length < 15 && reshuffledArray.length !== 0) {
-      reshuffledData.push(
         section.splice(Math.floor(Math.random() * section.length), 1)[0]
       );
     }
   };
 
   useEffect(() => {
-    const filteredShuffledData = reshuffledData.filter(
+    const newArray = [...data];
+    const tempArr = [];
+    while (newArray.length > 0) {
+      tempArr.push(
+        newArray.splice(Math.floor(Math.random() * newArray.length), 1)[0]
+      );
+    }
+    while (tempArr.length > 0) {
+      newArray.push(tempArr.pop());
+    }
+    // eslint-disable-next-line no-unused-vars
+    setData((prevData) => newArray);
+  }, []);
+
+  useEffect(() => {
+    const filteredShuffledData = reshuffledArray.filter(
       (item) => !visited.includes(item.id)
     );
     if (filteredShuffledData.length < 3) {
       shuffle();
     }
-  }, [reshuffledData]);
+  }, [reshuffledArray]);
 
   const handleClick = (ev) => {
     if (ev.target.tagName.toLowerCase() !== "a") {
@@ -104,10 +113,10 @@ function App() {
         <p>Click cards you have not clicked yet.</p>
       </div>
       <div className="container">
-        {reshuffledData.length === 0 ? (
+        {reshuffledArray.length === 0 ? (
           <p>Loading...</p>
         ) : (
-          reshuffledData.map((item) => (
+          reshuffledArray.map((item) => (
             <Card key={item.id} item={item} onClick={handleClick} />
           ))
         )}
