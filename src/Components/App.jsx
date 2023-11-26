@@ -14,10 +14,18 @@ function App() {
 
   const shuffle = () => {
     const newArray = [...data];
-    reshuffledData.length = 0;
-    while (reshuffledData.length < 15 && newArray.length !== 0) {
-      reshuffledData.push(
+    const indexScore = score <= 15 ? 0 : score <= 30 ? 15 : 30;
+    const reshuffledArray = [];
+    while (reshuffledArray.length < 45 && newArray.length !== 0) {
+      reshuffledArray.push(
         newArray.splice(Math.floor(Math.random() * newArray.length), 1)[0]
+      );
+    }
+    const section = reshuffledArray.splice(indexScore, 15);
+    reshuffledData.length = 0;
+    while (reshuffledData.length < 15 && reshuffledArray.length !== 0) {
+      reshuffledData.push(
+        section.splice(Math.floor(Math.random() * section.length), 1)[0]
       );
     }
   };
