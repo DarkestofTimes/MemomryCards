@@ -6,13 +6,53 @@
 }
 
 .card {
+  width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.3rem;
   padding: 0.5rem;
+  border: 2px solid black;
+  transition: border 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  border: 2px solid blue;
+}
+
+.cover {
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-color: black;
+  animation: shutter 2s ease-out;
+  transform: translateY(-100%);
 }
 
 .textWrapper {
   position: fixed;
   background-color: rgba(245, 222, 179, 0.411);
+  z-index: 1;
+}
+
+@keyframes shutter {
+  0% {
+    transform: translateY(-100%);
+  }
+  25% {
+    transform: translateY(-100%);
+  }
+  50% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
 }

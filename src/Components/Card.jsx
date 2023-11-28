@@ -1,7 +1,14 @@
 /* eslint-disable react/prop-types */
-export const Card = ({ item, onClick }) => {
+export const Card = ({ item, onClick, isShut, handleAnimationEnd }) => {
   return (
-    <div className="card" data-id={item.id} onClick={onClick}>
+    <div
+      className="card"
+      data-id={item.id}
+      onClick={onClick}
+      style={isShut ? { border: "2px solid black" } : {}}>
+      {isShut && (
+        <div className="cover" onAnimationEnd={handleAnimationEnd}></div>
+      )}
       <img
         height="350"
         width="233"

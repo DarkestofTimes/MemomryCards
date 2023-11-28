@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "../Styles/App.css";
 import { Card } from "./Card.jsx";
-import { key } from "../key.js";
+import { Effects } from "./Effects.jsx";
 
 function App() {
   const savedData = JSON.parse(localStorage.getItem("data")) || [];
@@ -10,100 +10,80 @@ function App() {
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(savedScore);
   const [visited, setVisited] = useState([]);
-  const reshuffledArray = [];
+  const [shut, setShut] = useState(false);
+  const [reshuffledArray, setReshuffledArray] = useState([]);
+  const [isHard, setIsHard] = useState(true);
+  const [isOver, setIsOver] = useState(false);
 
   const shuffle = () => {
     const newArray = [...data];
-    const indexScore = score <= 15 ? 0 : score <= 30 ? 15 : 30;
-    const section = newArray.splice(indexScore, 15);
-    reshuffledArray.length = 0;
-    while (reshuffledArray.length < 15 && newArray.length !== 0) {
-      reshuffledArray.push(
-        section.splice(Math.floor(Math.random() * section.length), 1)[0]
-      );
-    }
-  };
-
-  useEffect(() => {
-    const newArray = [...data];
-    const tempArr = [];
-    while (newArray.length > 0) {
-      tempArr.push(
-        newArray.splice(Math.floor(Math.random() * newArray.length), 1)[0]
-      );
-    }
-    while (tempArr.length > 0) {
-      newArray.push(tempArr.pop());
-    }
-    // eslint-disable-next-line no-unused-vars
-    setData((prevData) => newArray);
-  }, []);
-
-  useEffect(() => {
-    const filteredShuffledData = reshuffledArray.filter(
-      (item) => !visited.includes(item.id)
+    const indexScore =
+      score <= 9
+        ? 0
+        : score <= 19
+        ? 10
+        : score <= 29
+        ? 20
+        : score <= 39
+        ? 30
+        : 40;
+    const filteredNew = newArray.filter(
+      (item) => !visited.includes(item.id.toString())
     );
-    if (filteredShuffledData.length < 3) {
-      shuffle();
+    const section = isHard ? filteredNew : newArray.splice(indexScore, 10);
+    const filteredVisited = newArray.filter((item) =>
+      visited.includes(item.id.toString())
+    );
+    setReshuffledArray([]);
+    const tempArray = [];
+    while (tempArray.length < 10 && newArray.length !== 0) {
+      if (visited.length > 8 && tempArray.length < 8 && isHard) {
+        tempArray.push(
+          filteredVisited.splice(
+            Math.floor(Math.random() * filteredVisited.length),
+            1
+          )[0]
+        );
+      } else if (tempArray.length < 10 && isHard && visited.length > 47) {
+        tempArray.push(
+          filteredVisited.splice(
+            Math.floor(Math.random() * filteredVisited.length),
+            1
+          )[0]
+        );
+      } else {
+        tempArray.push(
+          section.splice(Math.floor(Math.random() * section.length), 1)[0]
+        );
+      }
     }
-  }, [reshuffledArray]);
+    setReshuffledArray([...tempArray]);
+  };
 
   const handleClick = (ev) => {
     if (ev.target.tagName.toLowerCase() !== "a") {
-      if (visited.includes(ev.target.getAttribute("data-id"))) {
-        setVisited([]);
-        setScore(0);
-      } else {
-        setVisited([...visited, ev.target.getAttribute("data-id")]);
-        setScore((score) => score + 1);
+      if (!shut) {
+        if (visited.includes(ev.target.getAttribute("data-id"))) {
+          setTimeout(() => {
+            setVisited([]);
+            setScore(0);
+            setIsOver(true);
+          }, 1000);
+        } else {
+          setTimeout(() => {
+            setVisited([...visited, ev.target.getAttribute("data-id")]);
+            setScore((score) => score + 1);
+          }, 1000);
+        }
+        setShut(true);
       }
-      shuffle();
     }
   };
 
-  useEffect(() => {
-    if (score > bestScore) {
-      // eslint-disable-next-line no-unused-vars
-      setBestScore((prev) => score);
-    }
-  }, [score, bestScore]);
+  const handleAnimationEnd = () => {
+    setShut(false);
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const url =
-        "https://api.pexels.com/v1/search?query=parrot+wild&orientation=portrait&per_page=45";
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: key,
-          },
-        });
-        if (!response) {
-          throw new Error("Network response was not ok");
-        }
-        const retrievedData = await response.json();
-        // eslint-disable-next-line no-unused-vars
-        setData((prevData) => [...retrievedData.photos]);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    if (data.length === 0) {
-      fetchData();
-    }
-  }, [data]);
-
-  useEffect(() => {
-    localStorage.setItem("score", JSON.stringify(bestScore));
-  }, [bestScore]);
-
-  useEffect(() => {
-    if (data.length > 0) localStorage.setItem("data", JSON.stringify(data));
-  }, [data]);
-
-  shuffle();
   return (
     <main>
       <div className="textWrapper">
@@ -116,11 +96,29 @@ function App() {
         {reshuffledArray.length === 0 ? (
           <p>Loading...</p>
         ) : (
-          reshuffledArray.map((item) => (
-            <Card key={item.id} item={item} onClick={handleClick} />
+          reshuffledArray.map((item, index) => (
+            <Card
+              key={index}
+              item={item}
+              onClick={handleClick}
+              isShut={shut}
+              handleAnimationEnd={handleAnimationEnd}
+            />
           ))
         )}
       </div>
+      <Effects
+        data={data}
+        setData={setData}
+        reshuffledArray={reshuffledArray}
+        shuffle={shuffle}
+        visited={visited}
+        score={score}
+        bestScore={bestScore}
+        setBestScore={setBestScore}
+        isOver={isOver}
+        setIsOver={setIsOver}
+      />
     </main>
   );
 }
