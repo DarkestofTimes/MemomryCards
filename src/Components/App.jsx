@@ -15,6 +15,10 @@ function App() {
   const [isHard, setIsHard] = useState(true);
   const [isOver, setIsOver] = useState(false);
 
+  const randomIndx = (array) => {
+    return array.splice(Math.floor(Math.random() * array.length), 1)[0];
+  };
+
   const shuffle = () => {
     const newArray = [...data];
     const indexScore =
@@ -30,31 +34,20 @@ function App() {
     const filteredNew = newArray.filter(
       (item) => !visited.includes(item.id.toString())
     );
-    const section = isHard ? filteredNew : newArray.splice(indexScore, 10);
     const filteredVisited = newArray.filter((item) =>
       visited.includes(item.id.toString())
     );
+    const section = isHard ? filteredNew : newArray.splice(indexScore, 10);
+
     setReshuffledArray([]);
     const tempArray = [];
     while (tempArray.length < 10 && newArray.length !== 0) {
       if (visited.length > 8 && tempArray.length < 8 && isHard) {
-        tempArray.push(
-          filteredVisited.splice(
-            Math.floor(Math.random() * filteredVisited.length),
-            1
-          )[0]
-        );
+        tempArray.push(randomIndx(filteredVisited));
       } else if (tempArray.length < 10 && isHard && visited.length > 47) {
-        tempArray.push(
-          filteredVisited.splice(
-            Math.floor(Math.random() * filteredVisited.length),
-            1
-          )[0]
-        );
+        tempArray.push(randomIndx(filteredVisited));
       } else {
-        tempArray.push(
-          section.splice(Math.floor(Math.random() * section.length), 1)[0]
-        );
+        tempArray.push(randomIndx(section));
       }
     }
     setReshuffledArray([...tempArray]);
