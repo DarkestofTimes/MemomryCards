@@ -2,6 +2,7 @@ import { useState } from "react";
 import "../Styles/App.css";
 import { Card } from "./Card.jsx";
 import { Effects } from "./Effects.jsx";
+import { Over } from "./Over.jsx";
 
 function App() {
   const savedData = JSON.parse(localStorage.getItem("data")) || [];
@@ -12,8 +13,9 @@ function App() {
   const [visited, setVisited] = useState([]);
   const [shut, setShut] = useState(false);
   const [reshuffledArray, setReshuffledArray] = useState([]);
-  const [isHard, setIsHard] = useState(true);
-  const [isOver, setIsOver] = useState(false);
+  const [isHard, setIsHard] = useState(null);
+  const [isOver, setIsOver] = useState(true);
+  const [prevScore, setPrevScore] = useState(0);
 
   const randomIndx = (array) => {
     return array.splice(Math.floor(Math.random() * array.length), 1)[0];
@@ -56,15 +58,19 @@ function App() {
   const handleClick = (ev) => {
     if (ev.target.tagName.toLowerCase() !== "a") {
       if (!shut) {
-        if (visited.includes(ev.target.getAttribute("data-id"))) {
+        if (
+          visited.includes(ev.target.getAttribute("data-id")) ||
+          score === 50
+        ) {
+          setVisited([]);
           setTimeout(() => {
-            setVisited([]);
+            setPrevScore(score);
             setScore(0);
             setIsOver(true);
           }, 1000);
         } else {
+          setVisited([...visited, ev.target.getAttribute("data-id")]);
           setTimeout(() => {
-            setVisited([...visited, ev.target.getAttribute("data-id")]);
             setScore((score) => score + 1);
           }, 1000);
         }
@@ -79,8 +85,16 @@ function App() {
 
   return (
     <main>
+      {isOver && (
+        <Over
+          score={score}
+          bestScore={bestScore}
+          setIsHard={setIsHard}
+          prevScore={prevScore}
+        />
+      )}
+
       <div className="textWrapper">
-        <h1>Cards!</h1>
         <h2 className="score">Score:{score}</h2>
         <h2 className="bestScore">Best score:{bestScore}</h2>
         <p>Click cards you have not clicked yet.</p>
@@ -96,6 +110,7 @@ function App() {
               onClick={handleClick}
               isShut={shut}
               handleAnimationEnd={handleAnimationEnd}
+              visited={visited}
             />
           ))
         )}
@@ -111,6 +126,8 @@ function App() {
         setBestScore={setBestScore}
         isOver={isOver}
         setIsOver={setIsOver}
+        isHard={isHard}
+        setIsHard={setIsHard}
       />
     </main>
   );

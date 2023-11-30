@@ -12,6 +12,8 @@ export const Effects = ({
   setBestScore,
   isOver,
   setIsOver,
+  isHard,
+  setIsHard,
 }) => {
   useEffect(() => {
     const newArray = [...data];
@@ -27,6 +29,18 @@ export const Effects = ({
     // eslint-disable-next-line no-unused-vars
     setData((prevData) => newArray);
   }, []);
+
+  useEffect(() => {
+    setIsOver(false);
+  }, [isHard]);
+
+  useEffect(() => {
+    setIsOver(true);
+  }, []);
+
+  useEffect(() => {
+    setIsHard(null);
+  }, [isOver]);
 
   useEffect(() => {
     const filteredShuffled = reshuffledArray.filter(
@@ -45,6 +59,10 @@ export const Effects = ({
       setIsOver(true);
     }
   }, [score]);
+
+  useEffect(() => {
+    shuffle();
+  }, [data]);
 
   useEffect(() => {
     if (score > bestScore) {

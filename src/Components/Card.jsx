@@ -1,11 +1,35 @@
 /* eslint-disable react/prop-types */
-export const Card = ({ item, onClick, isShut, handleAnimationEnd }) => {
+import { useState } from "react";
+
+export const Card = ({
+  item,
+  onClick,
+  isShut,
+  handleAnimationEnd,
+  visited,
+}) => {
+  const [active, setActive] = useState(false);
+  const border =
+    active && visited.length !== 0
+      ? "3px solid green"
+      : active && visited.length === 0
+      ? "3px solid red"
+      : "3px solid black";
+
+  const handleClick = (ev) => {
+    onClick(ev);
+    setActive(true);
+    setTimeout(() => {
+      setActive(false);
+    }, 1000);
+  };
+
   return (
     <div
       className="card"
       data-id={item.id}
-      onClick={onClick}
-      style={isShut ? { border: "2px solid black" } : {}}>
+      onClick={handleClick}
+      style={{ border: border }}>
       {isShut && (
         <div className="cover" onAnimationEnd={handleAnimationEnd}></div>
       )}
