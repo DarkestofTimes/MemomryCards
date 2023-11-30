@@ -9,12 +9,12 @@ export const Card = ({
   visited,
 }) => {
   const [active, setActive] = useState(false);
-  const border =
+  const cover =
     active && visited.length !== 0
-      ? "3px solid green"
+      ? "rgb(37, 116, 37)"
       : active && visited.length === 0
-      ? "3px solid red"
-      : "3px solid black";
+      ? "red"
+      : "rebeccapurple";
 
   const handleClick = (ev) => {
     onClick(ev);
@@ -25,13 +25,12 @@ export const Card = ({
   };
 
   return (
-    <div
-      className="card"
-      data-id={item.id}
-      onClick={handleClick}
-      style={{ border: border }}>
+    <div className="card" data-id={item.id} onClick={handleClick}>
       {isShut && (
-        <div className="cover" onAnimationEnd={handleAnimationEnd}></div>
+        <div
+          className="cover"
+          onAnimationEnd={handleAnimationEnd}
+          style={{ backgroundColor: cover }}></div>
       )}
       <img
         height="350"

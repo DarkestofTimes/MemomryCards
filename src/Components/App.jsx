@@ -3,6 +3,7 @@ import "../Styles/App.css";
 import { Card } from "./Card.jsx";
 import { Effects } from "./Effects.jsx";
 import { Over } from "./Over.jsx";
+import { LoadingScreen } from "./LoadingScreen.jsx";
 
 function App() {
   const savedData = JSON.parse(localStorage.getItem("data")) || [];
@@ -43,8 +44,9 @@ function App() {
 
     setReshuffledArray([]);
     const tempArray = [];
+    const twiceShuffled = [];
     while (tempArray.length < 10 && newArray.length !== 0) {
-      if (visited.length > 8 && tempArray.length < 8 && isHard) {
+      if (filteredVisited.length > 0 && tempArray.length < 8 && isHard) {
         tempArray.push(randomIndx(filteredVisited));
       } else if (tempArray.length < 10 && isHard && visited.length > 47) {
         tempArray.push(randomIndx(filteredVisited));
@@ -52,7 +54,11 @@ function App() {
         tempArray.push(randomIndx(section));
       }
     }
-    setReshuffledArray([...tempArray]);
+    while (tempArray.length > 0) {
+      twiceShuffled.push(randomIndx(tempArray));
+    }
+
+    setReshuffledArray([...twiceShuffled]);
   };
 
   const handleClick = (ev) => {
@@ -85,36 +91,39 @@ function App() {
 
   return (
     <main>
+      {reshuffledArray.length === 0 ? (
+        <LoadingScreen />
+      ) : (
+        <>
+          <div className="textWrapper">
+            <h2 className="score">Score: {score}</h2>
+            <h2 className="bestScore">Best score: {bestScore}</h2>
+          </div>
+          <div className="container">
+            {reshuffledArray.map((item, index) => (
+              <Card
+                key={index}
+                item={item}
+                onClick={handleClick}
+                isShut={shut}
+                handleAnimationEnd={handleAnimationEnd}
+                visited={visited}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
       {isOver && (
         <Over
           score={score}
           bestScore={bestScore}
           setIsHard={setIsHard}
           prevScore={prevScore}
+          setIsOver={setIsOver}
         />
       )}
 
-      <div className="textWrapper">
-        <h2 className="score">Score:{score}</h2>
-        <h2 className="bestScore">Best score:{bestScore}</h2>
-        <p>Click cards you have not clicked yet.</p>
-      </div>
-      <div className="container">
-        {reshuffledArray.length === 0 ? (
-          <p>Loading...</p>
-        ) : (
-          reshuffledArray.map((item, index) => (
-            <Card
-              key={index}
-              item={item}
-              onClick={handleClick}
-              isShut={shut}
-              handleAnimationEnd={handleAnimationEnd}
-              visited={visited}
-            />
-          ))
-        )}
-      </div>
       <Effects
         data={data}
         setData={setData}

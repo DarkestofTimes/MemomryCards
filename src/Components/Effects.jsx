@@ -12,7 +12,6 @@ export const Effects = ({
   setBestScore,
   isOver,
   setIsOver,
-  isHard,
   setIsHard,
 }) => {
   useEffect(() => {
@@ -31,15 +30,13 @@ export const Effects = ({
   }, []);
 
   useEffect(() => {
-    setIsOver(false);
-  }, [isHard]);
-
-  useEffect(() => {
     setIsOver(true);
   }, []);
 
   useEffect(() => {
-    setIsHard(null);
+    if (isOver) {
+      setIsHard(null);
+    }
   }, [isOver]);
 
   useEffect(() => {
