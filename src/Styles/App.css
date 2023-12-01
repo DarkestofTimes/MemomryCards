@@ -1,3 +1,7 @@
+main {
+  background: linear-gradient(rgb(37, 116, 37), rgb(36, 36, 36));
+}
+
 .container {
   width: 100%;
   min-height: 90vh;
@@ -46,7 +50,7 @@ img {
 .card a:any-link {
   height: 2rem;
   padding: 0 0.5rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: aliceblue;
   transition: color 0.5s ease;
 }
@@ -98,6 +102,7 @@ img {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   background-color: rgb(37, 116, 37);
+  color: aliceblue;
 }
 .textWrapper p {
   grid-column: 1/ -1;
