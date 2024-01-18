@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { key } from "../key.js";
 
 export const Effects = ({
   data,
@@ -70,15 +69,9 @@ export const Effects = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const url =
-        "https://api.pexels.com/v1/search?query=parrot+wild&orientation=portrait&per_page=50";
+      const url = "http://localhost:5000/pexels";
       try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: key,
-          },
-        });
+        const response = await fetch(url);
         if (!response) {
           throw new Error("Network response was not ok");
         }
