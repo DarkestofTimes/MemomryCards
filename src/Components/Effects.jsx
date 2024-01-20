@@ -69,7 +69,7 @@ export const Effects = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const url = "http://localhost:5000/pexels";
+      const url = "https://node-api-relay.onrender.com/pexels";
       try {
         const response = await fetch(url);
         if (!response) {
